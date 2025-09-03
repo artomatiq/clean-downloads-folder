@@ -16,7 +16,6 @@ FOLDERS = {
     "Apps": [".exe", ".dmg", ".apk", ".bat"],
     "Documents": [".doc", ".docx", ".txt", ".odt", ".xls", ".xlsx", ".ppt", ".pptx"],
 }
-
 SPECIAL_CL_NAME = "Cover Letter_AV"
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
