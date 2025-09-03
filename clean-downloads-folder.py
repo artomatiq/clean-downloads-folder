@@ -60,3 +60,6 @@ def categorize_file(path: Path):
     # all others
     safe_move(path, "Other")
 
+if __name__ == "__main__":
+    ensure_folders()
+    logging.info(f"Helpers ready. Downloads path: {DOWNLOADS}")
