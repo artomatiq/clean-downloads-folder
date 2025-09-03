@@ -60,6 +60,11 @@ def categorize_file(path: Path):
     # all others
     safe_move(path, "Other")
 
+def scan_existing_files():
+    for p in DOWNLOADS.itedir():
+        if p.is_file():
+            categorize_file(p)
+
 if __name__ == "__main__":
     ensure_folders()
     logging.info(f"Helpers ready. Downloads path: {DOWNLOADS}")
