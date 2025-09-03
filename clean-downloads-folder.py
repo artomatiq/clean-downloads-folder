@@ -1,5 +1,7 @@
 import logging
 from pathlib import Path
+import os
+import shutil
 
 DOWNLOADS = Path.home() / "Downloads"
 FOLDERS = {
@@ -25,4 +27,17 @@ def ensure_folders():
 if __name__ == "__main__":
     ensure_folders()
     logging.info(f"Ready. Downloads path: {DOWNLOADS}")
+
+def safe_move(src: Path, dest_folder_name: str) -> Path:
+    dest_folder = DOWNLOADS /dest_folder_name
+    dest_folder.mkdir(exists_ok=True)
+    dest = dest_folder / src.name
+    base, ext = os.path.splitext(dest.name)
+    i = 1
+    while dest.exists():
+        dest = dest_folder / f"{base} ({i}){ext}"
+        i += 1
+    shutil.move(str(src), str(dest))
+    logging.info(f"Moved {src.name} -> {dest}")
+    return dest
 
