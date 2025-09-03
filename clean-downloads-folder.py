@@ -41,3 +41,22 @@ def safe_move(src: Path, dest_folder_name: str) -> Path:
     logging.info(f"Moved {src.name} -> {dest}")
     return dest
 
+def categorize_file(path: Path):
+    if not path.is_file():
+        return
+    ext = path.suffix.lower()
+
+    # PDFs
+    if ext == ".pdf":
+        safe_move(path, "PDFs")
+        return
+    
+    # recognized non-PDFs
+    for folder, exts in FOLDERS.items():
+        if ext in exts:
+            safe_move(path, folder)
+            return
+    
+    # all others
+    safe_move(path, "Other")
+
