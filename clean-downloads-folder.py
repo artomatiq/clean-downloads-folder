@@ -25,15 +25,11 @@ def ensure_folders():
     for folder in list(FOLDERS.keys()) + ["Other"]:
         path = DOWNLOADS / folder
         path.mkdir(parents=True, exist_ok=True)
-        logging.info(f"Ready. Downloads path: {DOWNLOADS}")
-
-if __name__ == "__main__":
-    ensure_folders()
     logging.info(f"Ready. Downloads path: {DOWNLOADS}")
 
 def safe_move(src: Path, dest_folder_name: str) -> Path:
     dest_folder = DOWNLOADS /dest_folder_name
-    dest_folder.mkdir(exists_ok=True)
+    dest_folder.mkdir(exist_ok=True)
     dest = dest_folder / src.name
     base, ext = os.path.splitext(dest.name)
     i = 1
@@ -60,6 +56,12 @@ def handle_cover_letter_pdf(path: Path):
             logging.info(f"Removed existing {target.name} to enforce exact name")
         except Exception as e:
             logging.error(f"Rename to '{target.name} failed: {e}")
+    else:
+        try:
+            path.rename(target)
+            logging.info(f"Renamed to: {target.name}")
+        except Exception as e:
+            logging.error(f"Final rename failed: {e}")
 
 def categorize_file(path: Path):
     if not path.is_file():
@@ -69,7 +71,7 @@ def categorize_file(path: Path):
     # PDFs
     if ext == ".pdf":
         if SPECIAL_CL_NAME in path.name:
-            handle_cover_letter_pdf()
+            handle_cover_letter_pdf(path)
         else:
             safe_move(path, "PDFs")
         return
@@ -84,14 +86,14 @@ def categorize_file(path: Path):
     safe_move(path, "Other")
 
 def scan_existing_files():
-    for p in DOWNLOADS.itedir():
+    for p in DOWNLOADS.iterdir():
         if p.is_file():
             categorize_file(p)
 
 class DownloadsHandler(FileSystemEventHandler):
     def on_created(self, event):
         time.sleep(2)
-        path = Path(event.src_path)
+        path = Path(str(event.src_path))
         categorize_file(path)
 
 if __name__ == "__main__":
